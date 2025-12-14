@@ -7,7 +7,6 @@ try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
-    # python-dotenv is optional
     pass
 
 from src.utils import AsyncLLM

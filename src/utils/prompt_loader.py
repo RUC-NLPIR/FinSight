@@ -1,10 +1,4 @@
-"""
-Prompt Loader - A unified system for loading prompts from YAML files
-
-This module provides a centralized way to manage and load prompts from YAML configuration files.
-It supports different report types (e.g., general, financial) and allows easy switching between
-different prompt configurations.
-"""
+"""Prompt loader for YAML-based prompt templates."""
 
 import os
 import yaml
@@ -14,26 +8,9 @@ from pathlib import Path
 
 
 class PromptLoader:
-    """
-    Load and manage prompts from YAML configuration files.
-    
-    This class provides a centralized interface for loading prompts that can be
-    customized based on report type or other configurations.
-    
-    Attributes:
-        prompts_dir (Path): Directory containing the YAML prompt files
-        report_type (str): Type of report (e.g., 'general', 'financial')
-        prompts (Dict): Loaded prompt templates
-    """
+    """Load and manage prompts from YAML configuration files."""
     
     def __init__(self, prompts_dir: str, report_type: str = "general"):
-        """
-        Initialize the PromptLoader.
-        
-        Args:
-            prompts_dir: Directory path containing YAML prompt files
-            report_type: Type of report configuration to load (default: "general")
-        """
         self.prompts_dir = Path(prompts_dir)
         self.report_type = report_type
         self.prompts: Dict[str, Any] = {}
@@ -44,13 +21,7 @@ class PromptLoader:
         self._load_prompts()
     
     def _load_prompts(self):
-        """
-        Load prompts from YAML file based on report_type.
-        
-        Looks for files in the following priority:
-        1. {report_type}_prompts.yaml
-        2. prompts.yaml (default fallback)
-        """
+        """Load prompts from YAML file based on report_type."""
         # Try loading report-type specific file first
         specific_file = self.prompts_dir / f"{self.report_type}_prompts.yaml"
         parent_specific_file = self.prompts_dir / f"{self.report_type.split('_')[0]}_prompts.yaml"
@@ -74,19 +45,7 @@ class PromptLoader:
             self.prompts = yaml.safe_load(f) or {}
     
     def get_prompt(self, prompt_key: str, **kwargs) -> str:
-        """
-        Get a prompt template and optionally format it with provided arguments.
-        
-        Args:
-            prompt_key: Key of the prompt to retrieve
-            **kwargs: Optional keyword arguments to format the prompt template
-        
-        Returns:
-            The prompt template, formatted if kwargs are provided
-        
-        Raises:
-            KeyError: If the prompt_key is not found
-        """
+        """Get a prompt template and optionally format it with kwargs."""
         if prompt_key not in self.prompts:
             # raise KeyError(
             #     f"Prompt '{prompt_key}' not found in {self.prompts_dir}. "
@@ -112,30 +71,15 @@ class PromptLoader:
         return prompt_template
     
     def get_all_prompts(self) -> Dict[str, str]:
-        """
-        Get all loaded prompts.
-        
-        Returns:
-            Dictionary of all prompts
-        """
+        """Get all loaded prompts."""
         return self.prompts.copy()
     
     def list_available_prompts(self) -> list:
-        """
-        List all available prompt keys.
-        
-        Returns:
-            List of prompt key names
-        """
+        """List all available prompt keys."""
         return list(self.prompts.keys())
     
     def reload(self, report_type: Optional[str] = None):
-        """
-        Reload prompts, optionally changing the report type.
-        
-        Args:
-            report_type: New report type to load (optional)
-        """
+        """Reload prompts, optionally changing the report type."""
         if report_type:
             self.report_type = report_type
         self.prompts = {}
@@ -143,16 +87,7 @@ class PromptLoader:
     
     @staticmethod
     def create_loader_for_agent(agent_name: str, report_type: str = "general") -> 'PromptLoader':
-        """
-        Factory method to create a PromptLoader for a specific agent.
-        
-        Args:
-            agent_name: Name of the agent (e.g., 'report_generator', 'data_analyzer')
-            report_type: Type of report configuration to load
-        
-        Returns:
-            PromptLoader instance configured for the specified agent
-        """
+        """Create a PromptLoader for a specific agent."""
         # Get the absolute path to the agents directory
         current_file = Path(__file__)
         src_dir = current_file.parent.parent
@@ -162,15 +97,7 @@ class PromptLoader:
     
     @staticmethod
     def create_loader_for_memory(report_type: str = "general") -> 'PromptLoader':
-        """
-        Factory method to create a PromptLoader for memory module.
-        
-        Args:
-            report_type: Type of report configuration to load
-        
-        Returns:
-            PromptLoader instance configured for the memory module
-        """
+        """Create a PromptLoader for memory module."""
         # Get the absolute path to the memory directory
         current_file = Path(__file__)
         src_dir = current_file.parent.parent
@@ -180,17 +107,7 @@ class PromptLoader:
 
 
 def get_prompt_loader(module_name: str, report_type: str = "general") -> PromptLoader:
-    """
-    Convenience function to get a PromptLoader for any module.
-    
-    Args:
-        module_name: Name of the module ('report_generator', 'data_analyzer', 
-                    'data_collector', 'search_agent', 'memory')
-        report_type: Type of report configuration to load
-    
-    Returns:
-        PromptLoader instance
-    """
+    """Get a PromptLoader for any module."""
     if module_name == "memory":
         return PromptLoader.create_loader_for_memory(report_type)
     else:

@@ -1,6 +1,4 @@
-"""
-Thread-safe logging utilities that support concurrent and asynchronous workloads.
-"""
+"""Thread-safe logging utilities."""
 import logging
 import os
 import sys
@@ -10,13 +8,12 @@ from logging.handlers import RotatingFileHandler
 import contextvars
 
 
-# Async context variables used to propagate agent metadata across coroutines
 _cv_agent_id: contextvars.ContextVar[str] = contextvars.ContextVar('agent_id', default='N/A')
 _cv_agent_name: contextvars.ContextVar[str] = contextvars.ContextVar('agent_name', default='N/A')
 
 
 class AgentContextFilter(logging.Filter):
-    """Logging filter that injects agent context information."""
+    """Injects agent context into log records."""
     
     def filter(self, record):
         record.agent_id = _cv_agent_id.get()
@@ -25,7 +22,7 @@ class AgentContextFilter(logging.Filter):
 
 
 class Logger:
-    """Thread-safe logger with optional rotating-file output."""
+    """Thread-safe singleton logger."""
     
     _instance = None
     _initialized = False
@@ -41,13 +38,7 @@ class Logger:
             Logger._initialized = True
     
     def _setup_logger(self, log_dir: Optional[str] = None, log_level: int = logging.INFO):
-        """
-        Configure the logging system.
-
-        Args:
-            log_dir: Directory for log files; defaults to None (console only).
-            log_level: Logging level; defaults to INFO.
-        """
+        """Configure the logging system."""
         self.logger = logging.getLogger('finsight')
         self.logger.setLevel(log_level)
         
@@ -141,13 +132,7 @@ class Logger:
         self.logger.warning(message)
     
     def error(self, message: str, exc_info: bool = False):
-        """Log an ERROR-level message.
-        
-        Args:
-            message: The error message to log.
-            exc_info: If True, include exception traceback in the log output.
-                      Use this when logging from within an except block.
-        """
+        """Log an ERROR-level message."""
         self.logger.error(message, exc_info=exc_info)
     
     def exception(self, message: str):
@@ -180,16 +165,7 @@ def get_logger() -> Logger:
 
 
 def setup_logger(log_dir: Optional[str] = None, log_level: int = logging.INFO) -> Logger:
-    """
-    Configure and return the logger instance.
-
-    Args:
-        log_dir: Directory for log files.
-        log_level: Logging level.
-
-    Returns:
-        Logger instance.
-    """
+    """Configure and return the logger instance."""
     logger = get_logger()
     logger._setup_logger(log_dir=log_dir, log_level=log_level)
     if log_dir:
@@ -214,12 +190,7 @@ def warning(message: str):
 
 
 def error(message: str, exc_info: bool = False):
-    """Log an ERROR-level message.
-    
-    Args:
-        message: The error message to log.
-        exc_info: If True, include exception traceback in the log output.
-    """
+    """Log an ERROR-level message."""
     get_logger().error(message, exc_info=exc_info)
 
 

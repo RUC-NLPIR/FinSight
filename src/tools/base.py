@@ -56,7 +56,6 @@ class ToolResult:
         self.source = source  # str, data source
 
     def brief_str(self):
-        # Example formatting helper (unused)
         return self.__str__()
 
     def get_full_string(self):

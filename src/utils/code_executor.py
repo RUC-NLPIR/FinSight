@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Safe code executor that relies on IPython to run notebook-style snippets.
-"""
+"""IPython-based code executor."""
 
 import os
 import sys
@@ -19,9 +17,8 @@ import pandas as pd
 
 
 class CodeExecutor:
-    """
-    Safe code executor with dependency controls, output capture, and image export support.
-    """   
+    """Code executor with output capture and image export."""
+    
     ALLOWED_IMPORTS = {
         'pandas', 'pd',
         'numpy', 'np', 
@@ -36,29 +33,15 @@ class CodeExecutor:
     }
     
     def __init__(self, output_dir: str = "outputs"):
-        """
-        Initialize the executor.
-
-        Args:
-            output_dir: Directory for saved figures/files.
-        """
         self.output_dir = os.path.abspath(output_dir)
         os.makedirs(self.output_dir, exist_ok=True)
-        
-        # Initialize IPython shell
         self.shell = InteractiveShell.instance()
-        
-        # Configure font handling
         self._setup_chinese_font()
-        
-        # Preload common libraries
         self._setup_common_imports()
-        
-        # Image counter
         self.image_counter = 0
         
     def _setup_chinese_font(self):
-        """Configure matplotlib font settings (prefer Chinese-friendly fonts)."""
+        """Configure matplotlib font settings."""
         try:
             matplotlib.use('Agg')
             import matplotlib.pyplot as plt

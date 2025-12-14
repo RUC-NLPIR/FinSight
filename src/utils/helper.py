@@ -10,15 +10,7 @@ def image_to_base64(image_path: str) -> str:
         return ""
 
 def extract_markdown(text: str) -> str:
-    """
-    Extract Markdown content enclosed in ```markdown blocks.
-
-    Args:
-        text: String that may contain Markdown.
-
-    Returns:
-        The extracted Markdown content; falls back to the original text when no block is found.
-    """
+    """Extract Markdown content enclosed in code blocks."""
     pattern = r"```markdown\s*(.*?)\s*```"
     matches = re.findall(pattern, text, re.DOTALL)
     if matches:

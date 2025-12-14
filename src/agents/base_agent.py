@@ -1,6 +1,4 @@
-"""
-Core methods: save, load, run.
-"""
+"""Base agent with save/load/run capabilities."""
 from typing import Dict, Any, Union, Optional, Type
 import sys
 import os
@@ -16,24 +14,9 @@ from src.utils import AsyncCodeExecutor, get_logger
 from src.tools.base import Tool
 
 
-"""
-Responsibilities:
-- Persist and restore executor environments.
-- Manage dynamic code state and variables.
-"""
-
-"""
-Base agent responsibilities:
-1. async_run execution loop.
-2. Save/load logic.
-3. Tool loading and prompt wiring.
-"""
-
-# Agent registry, used to restore agents from checkpoints
 _AGENT_REGISTRY: Dict[str, Type['BaseAgent']] = {}
 
 def register_agent_class(agent_class: Type['BaseAgent']):
-    """Register an agent class for checkpoint restoration."""
     _AGENT_REGISTRY[agent_class.AGENT_NAME] = agent_class
     return agent_class
 
@@ -43,7 +26,6 @@ class BaseAgent:
     NECESSARY_KEYS = ['task']
     
     def __init_subclass__(cls, **kwargs):
-        """Automatically register subclasses for checkpoint restoration."""
         super().__init_subclass__(**kwargs)
         if hasattr(cls, 'AGENT_NAME') and cls.AGENT_NAME != 'base':
             register_agent_class(cls)
@@ -65,7 +47,6 @@ class BaseAgent:
         else:
             self.id = agent_id
         self.state = None
-        # Working directory: ./agent_working/{agent_id} (contains .cache, results, etc.)
         self.working_dir = os.path.join(self.config.working_dir, 'agent_working', self.id)
         os.makedirs(self.working_dir, exist_ok=True)
         self.cache_dir = os.path.join(self.working_dir, '.cache')
@@ -83,9 +64,7 @@ class BaseAgent:
         self.use_llm_name = use_llm_name
         self.llm = self.config.llm_dict[use_llm_name]
         self.memory = memory
-        # Additional LLM generation config can be added if needed
         
-        # Tools provide pre-defined helper functions for the prompt/executor
         if tools is None or tools == []:
             self._set_default_tools()
         else:
@@ -94,7 +73,6 @@ class BaseAgent:
             self.memory.add_dependency(tool.id, self.id)
         self.current_task_data = {}
         self.current_checkpoint = {}
-        # Runtime cache for resume support
         self._resume_state: Dict[str, Any] | None = None
         self.current_round = 0
         
@@ -106,16 +84,11 @@ class BaseAgent:
         return []
 
     def _get_persist_extra_state(self) -> Dict[str, Any]:
-        """
-        Hook for subclasses to persist additional runtime state (e.g., artifacts).
-        Called at each iteration and upon completion.
-        """
+        """Hook for subclasses to persist additional state."""
         return {}
 
     def _load_persist_extra_state(self, state: Dict[str, Any]):
-        """
-        Hook for subclasses to restore extra runtime state saved earlier.
-        """
+        """Hook for subclasses to restore extra state."""
         return
     
     @classmethod
@@ -129,21 +102,7 @@ class BaseAgent:
         restored_agents: Optional[Dict[str, 'BaseAgent']] = None,
         **kwargs
     ) -> Optional['BaseAgent']:
-        """
-        Restore an agent (and its dependencies) from a checkpoint.
-
-        Args:
-            config: Config instance.
-            memory: Memory instance.
-            agent_id: Agent identifier.
-            checkpoint_name: Checkpoint filename.
-            tools: Optional tool list; restored from checkpoint if None.
-            restored_agents: Cache of already restored agents.
-            **kwargs: Additional initialization arguments (e.g., use_llm_name).
-
-        Returns:
-            BaseAgent instance or None on failure.
-        """
+        """Restore an agent from a checkpoint."""
         if restored_agents is None:
             restored_agents = {}
         
@@ -274,7 +233,7 @@ class BaseAgent:
         restored_agents: Dict[str, 'BaseAgent'],
         **kwargs
     ) -> list:
-        """Restore tools (including dependent agents) from checkpoint state."""
+        """Restore tools from checkpoint state."""
         from src.tools import get_tool_by_name
         
         tool_dependencies = state.get('tool_dependencies', [])
@@ -341,12 +300,7 @@ class BaseAgent:
         return restored_tools
 
     async def save(self, state: Dict[str, Any] | None = None, checkpoint_name: str = 'latest.pkl'):
-        """
-        Persist the current agent state to a checkpoint.
-
-        Args:
-            state: Optional extra state to merge before saving.
-        """
+        """Persist the current agent state to a checkpoint."""
         # Capture tool dependencies (agent/tool identifiers)
         tool_dependencies = []
         for tool in self.tools:
@@ -403,9 +357,7 @@ class BaseAgent:
                 self.logger.error(f"Failed to save code-executor state: {e}", exc_info=True)
 
     async def load(self, checkpoint_name: str = 'latest.pkl') -> Dict[str, Any] | None:
-        """
-        Load runtime state from a checkpoint; returns dict on success.
-        """
+        """Load state from a checkpoint."""
         target_path = os.path.join(self.cache_dir, checkpoint_name)
         if not os.path.exists(target_path):
             return None
@@ -431,21 +383,15 @@ class BaseAgent:
         return state
 
     async def _prepare_executor(self):
-        # Load helper variables/functions into the executor
         if self.enable_code:
             self.code_executor.set_variable("call_tool", self._agent_tool_function)
 
     async def _prepare_init_prompt(self, input_data: dict) -> list[dict]:
-        # Build the initial prompt
         raise NotImplementedError
     
 
     def _agent_tool_function(self, tool_name: str, **kwargs):
-        """
-        Execute a tool or dependent agent when called from code.
-        Used by the `call_tool` helper exposed to the executor.
-        """
-        
+        """Execute a tool by name."""
         target_tool = None
         for tool in self.tools:
             if isinstance(tool, Tool):
@@ -484,7 +430,6 @@ class BaseAgent:
             return []
     
     def _get_api_descriptions(self) -> str:
-        """Generate human-readable descriptions for available tools/agents."""
         desc = ''
         for tool in self.tools:
             if issubclass(type(tool), Tool):
@@ -509,15 +454,7 @@ class BaseAgent:
         checkpoint_name: str = 'latest.pkl',
         prompt_function=None,
     ) -> dict:
-        """
-        Execution loop:
-        1. `_prepare_executor` sets up variables/tools for the code sandbox.
-        2. `_prepare_init_prompt` builds the initial prompt.
-        3. `_parse_llm_response` interprets LLM outputs (e.g., code/final/search).
-        4. `_execute_action` dispatches to the appropriate handler.
-
-        Subclasses only implement the handler functions; dispatching is automatic.
-        """
+        """Main execution loop."""
         # Ensure logger context is set (important for asyncio execution)
         self.logger.set_agent_context(self.id, self.AGENT_NAME)
         
@@ -611,10 +548,7 @@ class BaseAgent:
         return {'coversation_history': conversation_history, 'final_result': conversation_history[-1]['content']}
 
     def _parse_llm_response(self, response: str) -> tuple[str, str]:
-        """
-        Parse the LLM response to extract action tags and payloads.
-        """
-        # replace thinking pattern
+        """Parse the LLM response to extract action tags."""
         response = response.replace("<thinking>", "\n").replace("</thinking>", "\n")
         response = response.replace("<think>", "\n").replace("</think>", "\n")
         pattern = re.compile(r"<([\w_]+)>(.*?)</\1>", re.DOTALL)
@@ -645,7 +579,6 @@ class BaseAgent:
     
 
     async def _handle_code_action(self, action_content: str):
-        """Handle a 'code' action by executing it via the sandbox."""
         code_result = await self.code_executor.execute(code=action_content)
         code_result = self._format_execution_result(code_result)
         return {
@@ -656,7 +589,6 @@ class BaseAgent:
         }
 
     async def _handle_final_action(self, action_content: str):
-        """Handle a 'final' action and stop the loop."""
         return {
             "action": "final_result",
             "action_content": action_content,
@@ -665,7 +597,6 @@ class BaseAgent:
         }
 
     async def _handle_default_action(self, action_type: str, action_content: str):
-        """Fallback handler for unknown action types."""
         return {
             "action": "invalid_response",
             "action_content": action_content,
@@ -675,7 +606,6 @@ class BaseAgent:
      
         
     def _format_execution_result(self, result: Dict[str, Any]) -> str:
-        """Format executor output into a user-friendly string."""
         feedback = []
 
         if result["error"] is False:

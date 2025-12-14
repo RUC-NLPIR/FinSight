@@ -1,7 +1,3 @@
-"""
-FinSight Demo Backend API Server
-FastAPI-based backend for the FinSight financial report generation system
-"""
 import os
 import sys
 import asyncio
@@ -27,10 +23,6 @@ from src.memory import Memory
 from src.utils import setup_logger, get_logger
 import logging
 
-
-# ============================================================================
-# Pydantic Models for API
-# ============================================================================
 
 class LLMConfig(BaseModel):
     model_name: str
@@ -75,9 +67,6 @@ class AgentStatus(BaseModel):
     progress: Optional[str] = ""
 
 
-# ============================================================================
-# WebSocket Connection Manager
-# ============================================================================
 
 class ConnectionManager:
     def __init__(self):
@@ -123,22 +112,17 @@ class ConnectionManager:
         self.agent_logs.clear()
 
 
-# ============================================================================
-# FastAPI App Initialization
-# ============================================================================
-
 app = FastAPI(title="FinSight Demo API", version="1.0.0")
 
-# CORS middleware for frontend communication
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173"],  # React/Vite default ports
+    allow_origins=["http://localhost:3000", "http://localhost:5173"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Global state
+
 manager = ConnectionManager()
 current_config: Optional[SystemConfig] = None
 current_tasks: TaskList = TaskList(collect_tasks=[], analysis_tasks=[])
@@ -149,9 +133,6 @@ execution_state: Dict[str, Any] = {
 }
 
 
-# ============================================================================
-# Custom Log Handler for WebSocket Broadcasting
-# ============================================================================
 
 class WebSocketLogHandler(logging.Handler):
     def __init__(self, connection_manager: ConnectionManager):
@@ -180,10 +161,6 @@ class WebSocketLogHandler(logging.Handler):
         except Exception:
             self.handleError(record)
 
-
-# ============================================================================
-# API Endpoints - Configuration
-# ============================================================================
 
 # Get the base directory for user configs
 USER_CONFIGS_DIR = Path(__file__).parent / "user_configs"
@@ -284,10 +261,6 @@ async def delete_config(config_name: str):
     return {"status": "success", "message": f"Configuration '{config_name}' deleted"}
 
 
-# ============================================================================
-# API Endpoints - Tasks
-# ============================================================================
-
 @app.get("/api/tasks")
 async def get_tasks():
     """Get current task list"""
@@ -367,10 +340,6 @@ async def delete_tasks(task_name: str):
     tasks_file.unlink()
     return {"status": "success", "message": f"Tasks '{task_name}' deleted"}
 
-
-# ============================================================================
-# API Endpoints - Execution
-# ============================================================================
 
 @app.get("/api/execution/status")
 async def get_execution_status():
@@ -479,10 +448,6 @@ async def stop_execution():
     return {"status": "success", "message": "Execution stop requested"}
 
 
-# ============================================================================
-# API Endpoints - Reports
-# ============================================================================
-
 @app.get("/api/reports")
 async def list_reports():
     """List all generated reports"""
@@ -494,7 +459,6 @@ async def list_reports():
     else:
         output_base = Path("outputs/demo-fastapi")
     
-    # Handle relative paths
     if not output_base.is_absolute():
         output_base = Path(__file__).parent / output_base
     
@@ -611,10 +575,6 @@ async def preview_report(target_name: str, filename: str):
     return {"content": content, "filename": filename}
 
 
-# ============================================================================
-# WebSocket Endpoint
-# ============================================================================
-
 @app.websocket("/ws/logs")
 async def websocket_logs(websocket: WebSocket):
     """WebSocket endpoint for real-time log streaming"""
@@ -627,11 +587,6 @@ async def websocket_logs(websocket: WebSocket):
             await websocket.send_json({"type": "heartbeat", "message": "pong"})
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-
-
-# ============================================================================
-# Report Generation Logic
-# ============================================================================
 
 async def run_report_generation(resume: bool = False):
     """Main report generation logic"""
@@ -903,10 +858,6 @@ async def update_agent_status(status: AgentStatus):
         "timestamp": datetime.now().isoformat()
     })
 
-
-# ============================================================================
-# Main Entry Point
-# ============================================================================
 
 if __name__ == "__main__":
     uvicorn.run(

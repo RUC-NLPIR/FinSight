@@ -10,12 +10,6 @@ class LLM:
         model_name: str,
         generation_params: dict = None
     ):
-        """Initialize LLM wrapper class
-        Args:
-            client: OpenAI client instance
-            model_name: Name of the model to use (e.g. "gpt-3.5-turbo")
-            generation_params: Default parameters for generation
-        """
         self.client = OpenAI(
             base_url=base_url,
             api_key=api_key
@@ -38,19 +32,7 @@ class LLM:
         messages: List[Dict[str, str]], 
         **params
     ) -> Union[str, Any]:
-        """Generate completion from messages
-        
-        Args:
-            messages: List of message dicts with "role" and "content"
-            **params: Additional generation parameters that override defaults
-            
-        Returns:
-            Generated text response or raw response object
-            
-        Raises:
-            NotImplementedError: If client is invalid
-            Exception: For other API errors
-        """
+        """Generate completion from messages."""
         if self.client is not None and hasattr(self.client, 'chat') and hasattr(self.client.chat, 'completions'):
             try:
                 response = self.client.chat.completions.create(
