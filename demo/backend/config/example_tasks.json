@@ -1,0 +1,46 @@
+{
+    "collect_tasks": [
+        {
+            "id": "task_1700000001",
+            "type": "collect",
+            "content": "Latest share price"
+        },
+        {
+            "id": "task_1700000002",
+            "type": "collect",
+            "content": "Sample company balance sheet"
+        },
+        {
+            "id": "task_1700000003",
+            "type": "collect",
+            "content": "Recent financial statements"
+        },
+        {
+            "id": "task_1700000004",
+            "type": "collect",
+            "content": "Company news and announcements"
+        }
+    ],
+    "analysis_tasks": [
+        {
+            "id": "task_2700000001",
+            "type": "analyze",
+            "content": "Company history and business review"
+        },
+        {
+            "id": "task_2700000002",
+            "type": "analyze",
+            "content": "Ownership structure analysis"
+        },
+        {
+            "id": "task_2700000003",
+            "type": "analyze",
+            "content": "Financial performance analysis"
+        },
+        {
+            "id": "task_2700000004",
+            "type": "analyze",
+            "content": "Market position and competitive analysis"
+        }
+    ]
+}
