@@ -29,7 +29,7 @@ FinSight: Towards Real-World Financial Deep Research
 
 </div>
 
-## 🎥 Product Walkthrough
+## 🎥 Demo
 
 <div align="center">
   <video src="assets/demo.mp4" width="800" controls poster="assets/example2.png">
