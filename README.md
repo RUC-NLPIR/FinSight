@@ -31,14 +31,10 @@ FinSight: Towards Real-World Financial Deep Research
 
 ## 🎥 Demo
 
-<div align="center">
-  <video src="assets/demo.mp4" width="800" controls poster="assets/example2.png">
-    Your browser does not support the video tag.  
-  </video>
-</div>
+https://github.com/user-attachments/assets/41963369-3dd4-4dfd-ad95-ef95cd092ebb
 
 <p align="center">
-  <i>End-to-end UI demo: one ticker ➜ automated research ➜ publish-ready report.</i>
+  <i>Easy-to-Use UI demo: one ticker ➜ automated research ➜ publish-ready report.</i>
 </p>
 
 ## 📑 Table of Contents
