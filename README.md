@@ -15,6 +15,7 @@ FinSight: Towards Real-World Financial Deep Research
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 <a href="https://deepwiki.com/RUC-NLPIR/FinSight"><img src="https://devin.ai/assets/deepwiki-badge.png" alt="DeepWiki Document" height="20"/></a>
+[![AFAC2025 Track 4](https://img.shields.io/badge/🏆_AFAC2025-1st_Place_(1/1289)-gold.svg?style=flat)](https://tianchi.aliyun.com/specials/promotion/afac2025)
 
 </p>
 
