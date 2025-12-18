@@ -1,0 +1,26 @@
+target_name: "商汤科技"
+stock_code: "00020"
+target_type: 'company'  # company, macro, industry
+output_dir: "./outputs/exp-v1"
+language: 'zh' # zh,en
+
+use_collect_data_cache: True
+use_analysis_cache: True
+use_report_outline_cache: True
+use_full_report_cache: True
+use_post_process_cache: True
+
+llm_config_list:
+  - model_name: "${DS_MODEL_NAME}"
+    api_key: "${DS_API_KEY}"
+    base_url: "${DS_BASE_URL}"
+    generation_params:
+      temperature: 0.5
+      max_tokens: 1000
+      top_p: 1
+  - model_name: "${EMBEDDING_MODEL_NAME}"
+    api_key: "${EMBEDDING_API_KEY}"
+    base_url: "${EMBEDDING_BASE_URL}"
+  - model_name: "${VLM_MODEL_NAME}"
+    api_key: "${VLM_API_KEY}"
+    base_url: "${VLM_BASE_URL}"

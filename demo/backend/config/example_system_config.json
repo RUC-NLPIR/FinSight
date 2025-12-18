@@ -1,0 +1,34 @@
+{
+    "target_name": "浪潮信息",
+    "stock_code": "000977",
+    "output_dir": "outputs/demo",
+    "reference_doc_path": "src/template/report_template.docx",
+    "outline_template_path": "src/template/company_outline.md",
+    "llm_configs": [
+        {
+            "model_name": "deepseek-chat",
+            "api_key": "your_deepseek_api_key_here",
+            "base_url": "https://api.deepseek.com",
+            "generation_params": {
+                "temperature": 0.5,
+                "max_tokens": 1000,
+                "top_p": 1
+            }
+        },
+        {
+            "model_name": "gpt-4-vision",
+            "api_key": "your_vlm_api_key_here",
+            "base_url": "https://api.openai.com/v1",
+            "generation_params": {}
+        },
+        {
+            "model_name": "text-embedding-ada-002",
+            "api_key": "your_embedding_api_key_here",
+            "base_url": "https://api.openai.com/v1",
+            "generation_params": {}
+        }
+    ],
+    "ds_model_name": "deepseek-chat",
+    "vlm_model_name": "gpt-4-vision",
+    "embedding_model_name": "text-embedding-ada-002"
+}

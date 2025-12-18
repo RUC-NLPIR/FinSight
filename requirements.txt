@@ -1,0 +1,34 @@
+# Environment
+python-dotenv
+dill
+json_repair
+
+# Core 
+openai
+pandas>=2.0.0
+numpy>=1.24.0
+jieba>=0.42.0
+playwright
+bs4
+crawl4ai
+fake_useragent
+browser-use
+akshare
+efinance
+matplotlib
+seaborn
+
+# Document Processing
+pdfplumber
+docx2pdf
+python-docx
+
+# Demo
+streamlit
+fastapi
+uvicorn
+websockets
+pydantic
+python-multipart
+
+

@@ -1,0 +1,144 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica,
+    Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* Custom scrollbar - Red theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #dc2626;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b91c1c;
+}
+
+/* Simple card style - removed expensive backdrop-filter */
+.glass-card {
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Red gradient animation */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Logo glow pulse animation */
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+/* Removed animated-gradient - use solid color instead */
+.animated-gradient {
+  background: #dc2626;
+}
+
+/* Custom Menu Styles */
+.custom-menu .ant-menu-item-selected {
+  background: rgba(220, 38, 38, 0.08) !important;
+  border-right: 3px solid #dc2626 !important;
+  color: #dc2626 !important;
+  font-weight: 600;
+}
+
+.custom-menu .ant-menu-item-selected::after {
+  border-right: none !important;
+}
+
+.custom-menu .ant-menu-item:hover {
+  background: rgba(220, 38, 38, 0.05) !important;
+  color: #dc2626 !important;
+}
+
+.custom-menu .ant-menu-item {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 8px 0 0 8px;
+  margin: 4px 0;
+  padding-left: 24px !important;
+}
+
+.custom-menu .ant-menu-item-icon {
+  color: inherit;
+}
+
+/* Custom Ant Design overrides for red theme */
+.ant-btn-primary:not([disabled]):hover {
+  background: #b91c1c !important;
+  border-color: #b91c1c !important;
+}
+
+.ant-progress-circle .ant-progress-text {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.ant-tag-red {
+  background: rgba(220, 38, 38, 0.08);
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.ant-tag-orange {
+  background: rgba(234, 88, 12, 0.08);
+  border-color: #ea580c;
+  color: #ea580c;
+}
+
+.ant-badge-status-processing {
+  background: #dc2626;
+}
+
+/* Card hover effects - simplified */
+.ant-card-hoverable:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
