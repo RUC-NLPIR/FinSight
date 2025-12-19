@@ -2,13 +2,6 @@ import json
 import os
 import re
 import yaml
-
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except ImportError:
-    pass
-
 from src.utils import AsyncLLM
 
 class Config:

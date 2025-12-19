@@ -55,8 +55,18 @@ class AsyncCodeExecutor:
             import numpy as np
             import matplotlib.pyplot as plt
             import matplotlib
-            matplotlib.rcParams['font.sans-serif'] = ['SimHei'] 
-            matplotlib.rcParams['axes.unicode_minus'] = False 
+            import matplotlib.font_manager as fm
+            font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'kt_font.ttf')
+            
+            if os.path.exists(font_path):
+                fm.fontManager.addfont(font_path)
+                font_prop = fm.FontProperties(fname=font_path)
+                custom_font_name = font_prop.get_name()
+                matplotlib.rcParams['font.family'] = custom_font_name
+                matplotlib.rcParams['font.sans-serif'] = [custom_font_name, 'SimHei', 'Arial Unicode MS']
+            else:
+                matplotlib.rcParams['font.sans-serif'] = ['SimHei', 'KaiTi', 'sans-serif']
+            matplotlib.rcParams['axes.unicode_minus'] = False
             context.update({
                 'pd': pd,
                 'pandas': pd,
@@ -261,7 +271,8 @@ class AsyncCodeExecutor:
         stdout_capture = io.StringIO()
         stderr_capture = io.StringIO()
         has_error = False
-        
+        header = "import matplotlib.pyplot as plt; plt.rcParams['font.sans-serif'] = ['SimHei']; plt.rcParams['axes.unicode_minus'] = False"       
+        code = header + '\n' + code
         # Wrap exec so it can run inside a thread
         def sync_exec():
             nonlocal has_error

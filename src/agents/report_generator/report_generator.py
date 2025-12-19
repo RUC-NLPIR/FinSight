@@ -142,7 +142,7 @@ class ReportGenerator(BaseAgent):
         # Prepare data information for the agent
         collect_data_list = self.memory.get_collect_data(exclude_type=['search', 'click'])
         analysis_result_list = self.memory.get_analysis_result()
-        data_info = "\n\n## Available Datasets\n\n"
+        data_info = "\n\n## Available Datas\n\n"
         for idx, item in enumerate(collect_data_list):
             data_info += f"**Data ID {idx}:**\n{item.brief_str()}\n\n"
         data_info += "\nYou can access these datasets using `get_data(data_id)` in your code.\n"
