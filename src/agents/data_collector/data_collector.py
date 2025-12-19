@@ -117,7 +117,7 @@ class DataCollector(BaseAgent):
     async def async_run(
         self, 
         input_data: dict, 
-        max_iterations: int = 10,
+        max_iterations: int = 20,
         stop_words: list[str] = [],
         echo=False,
         resume: bool = True,
