@@ -98,7 +98,7 @@ class DeepSearchAgent(BaseAgent):
                 result = f"Query `{action_content}` returned no results; please try again."
             else:
                 result = f"Search results for `{action_content}`\n"
-                
+ 
                 for idx, item in enumerate(search_result):
                     title = item.name
                     link = item.link
@@ -120,6 +120,7 @@ class DeepSearchAgent(BaseAgent):
                     result += f"Title: {title}\n"
                     result += f"Link: {link}\n"
                     result += f"Summary: {description}\n\n"
+                    
             for search_item in search_result:
                 self.memory.add_data(search_item)
             self.memory.add_log(
@@ -148,7 +149,6 @@ class DeepSearchAgent(BaseAgent):
         if self.current_round >= (self.max_iterations - 1):
             result += "\n\n⚠️ You have reached the maximum number of running iterations. Please provide your final report now."
             result += self._build_available_sources_list()
-
         return {
             "action": "search",
             "action_content": action_content,
@@ -300,6 +300,7 @@ class DeepSearchAgent(BaseAgent):
     ) -> dict:
         input_data['max_iterations'] = max_iterations
         self.max_iterations = max_iterations
+        await self._prepare_executor()
         run_result = await super().async_run(
             input_data=input_data,
             max_iterations=max_iterations,

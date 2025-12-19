@@ -432,12 +432,14 @@ class BaseAgent:
             return []
     
     def _get_api_descriptions(self) -> str:
-        desc = ''
+        desc = 'The usage of tool calling: `tool_result = call_tool(tool_name=\'tool_name\', **kwargs)`. (you can use custom variable names for the tool result)\n\n'
+        desc += 'Below are the tools and their descriptions:\n\n'
         for tool in self.tools:
             if issubclass(type(tool), Tool):
-                desc += f"- Tool: {tool.name}\nDescription: {tool.description}\nParameters: {tool.parameters}\n\n"
+                desc += f"- Tool: {tool.name}\nDescription: {tool.description}\nParameters: {tool.parameters}\n\nOutput: "
             elif issubclass(type(tool), BaseAgent):
                 desc += f"- Tool: {tool.AGENT_NAME}\nDescription: {tool.AGENT_DESCRIPTION}\n\n"
+        desc += 'The result of each tool is a varaible, please use `print` to print the result.'
         return desc
     
     def _check_necessary_data(self, input_data):
@@ -499,6 +501,8 @@ class BaseAgent:
                 self.logger.info(f"Action result this step: {action_result['result']}")
                 self.logger.info("--------")
             conversation_history.append({"role": "assistant", "content": action_result['llm_response']})
+            print("***************************")
+            print(action_result['result'])
             conversation_history.append({"role": "user", "content": action_result['result']})
 
             # Save each iteration to support resume

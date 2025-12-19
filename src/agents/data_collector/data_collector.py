@@ -127,7 +127,7 @@ class DataCollector(BaseAgent):
         # Reset collected-data cache for each run
         self.collected_data_list = []
         self.logger.info(f"DataCollector started: task={input_data.get('task','')} resume={resume}")
- 
+        await self._prepare_executor()
         run_result = await super().async_run(
             input_data=input_data,
             max_iterations=max_iterations,
