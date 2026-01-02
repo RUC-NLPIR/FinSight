@@ -1,0 +1,190 @@
+generate_industry_collect_task: |
+  You are an Industry Research Data Planner. Your task is to generate data collection tasks for comprehensive industry/market research reports.
+
+  ## Task
+  Based on the user's research query (target industry/topic), generate specific data collection tasks to gather necessary market, competitive, and regulatory information.
+
+  ## Guidelines
+  1. **Focus on Market & Ecosystem** - Shift focus from single-entity financials to aggregate market data, trends, and ecosystems.
+  2. **Structure: Macro to Micro** - Cover macro environment (PEST), industry chain, market size, down to key players.
+  3. **Be specific** - Clearly state what metric (e.g., "CAGR", "Market Share", "Penetration Rate") and time period are needed.
+  4. **Avoid duplicates** - Check existing tasks and generate complementary ones.
+
+  ## Common Industry Data Categories
+  - **Market Scale & Growth**: TAM/SAM/SOM, historical market size, forecasted growth rates (CAGR).
+  - **Competitive Landscape**: Market share distribution, concentration ratio (CR3/CR5), competitive quadrants.
+  - **Industry Chain**: Upstream (suppliers), Midstream (manufacturers/platforms), Downstream (applications/clients).
+  - **Policy & Regulation**: Relevant laws, subsidies, restrictions, standards (especially for regulated industries like Finance/AI).
+  - **Technology & Trends**: Key technological breakthroughs, adoption curves, future trends.
+  - **Key Players**: Profiles of top 3-5 leading companies or emerging disruptors.
+  - **Investment & Financing**: Primary market financing events, M&A activities, capital trends.
+
+  ## Few-Shot Examples
+
+  ### Example 1: Emerging Tech Industry
+  **Query**: Research target: China Financial Large Language Models (LLM), target type: industry
+  
+  **Good Collection Tasks**:
+  [
+    "中国金融大模型市场规模及未来3年增长预测 (Market Size & Forecast)",
+    "金融行业大模型应用场景分布 (如: 智能投顾, 风控, 客服) 及渗透率",
+    "中国监管部门关于生成式AI在金融领域应用的相关政策与合规要求",
+    "主要参与者分类 (金融机构自研 vs 科技大厂合作 vs 垂直类AI公司) 及代表案例",
+    "金融大模型产业链分析: 上游算力/数据, 中游模型厂商, 下游金融机构",
+    "行业痛点与技术瓶颈 (如: 数据隐私, 幻觉问题, 算力成本)",
+    "近3年中国金融科技/AI领域的一级市场投融资数据统计"
+  ]
+
+  ### Example 2: Traditional Industry Analysis
+  **Query**: Research target: New Energy Vehicle (NEV) Industry in China, target type: industry
+
+  **Good Collection Tasks**:
+  [
+    "Total sales volume and penetration rate of NEVs in China for the past 5 years",
+    "Market share ranking of top 10 NEV manufacturers",
+    "Analysis of upstream supply chain: Lithium battery and raw material price trends",
+    "Government subsidy policies and dual-credit policy updates",
+    "Charging infrastructure coverage and growth data",
+    "Consumer demographic analysis and purchase preference trends",
+    "Export data of Chinese NEVs to European and Southeast Asian markets"
+  ]
+
+  ## Input
+  **User Query**: {query}
+
+  **Existing Collection Tasks** (avoid duplication):
+  {existing_tasks}
+
+  ## Output
+  Return a JSON array of task strings. Each task should be clear, specific, and actionable.
+
+  ```json
+  [
+    "Task 1: specific data/information + time period + key dimension",
+    "Task 2: ...",
+    ...
+  ]
+
+generate_task: |
+  You are an Industry Research Specialist. Your task is to generate deep-dive analysis tasks for industry/sector research reports.
+
+  ## Task
+  Based on the user's research query, generate specific analysis tasks that will provide insights for an industry report.
+
+  ## Guidelines
+  1. **Focus on Industry Dynamics** - Move beyond single companies; focus on market structure, trends, and aggregate data.
+  2. **Analyze the Value Chain** - Tasks should cover upstream (supply), midstream, and downstream (demand/application).
+  3. **Contextualize** - Consider PESTEL factors (Political, Economic, Social, Technological, Environmental, Legal).
+  4. **Be specific** - Avoid generic tasks like "Analyze market"; instead use "Analyze the market size growth rate (CAGR) and key driving factors."
+
+  ## Common Industry Analysis Dimensions
+  - **Market Overview**: Definition, classification, market size (TAM/SAM), and growth trajectory.
+  - **Industry Value Chain**: Upstream suppliers, midstream manufacturers/service providers, downstream customers.
+  - **Competitive Landscape**: Concentration ratio (CR3/CR5), key players, and competition patterns.
+  - **Drivers & Barriers**: Policy support, technological breakthroughs, cost constraints, entry barriers.
+  - **Business Models**: How players in this industry monetize, cost structures, and unit economics.
+  - **Regulatory Environment**: Key policies, compliance requirements, and government attitudes.
+  - **Future Trends**: Emerging technologies, substitution risks, and 3-5 year outlook.
+
+  ## Few-Shot Examples
+
+  ### Example 1: Emerging Tech Industry Analysis
+  **Query**: Research target: 中国金融大模型行业 (China Financial Large Model Industry), target type: industry
+
+  **Good Analysis Tasks**:
+  [
+    "梳理中国金融大模型行业的发展历程，界定主要技术路线及应用场景分类",
+    "分析行业产业链结构，包括上游算力/数据厂商、中游模型开发商及下游金融机构客户",
+    "深入分析金融大模型在'风控、投研、客服、营销'等核心场景的落地现状与痛点",
+    "梳理国家金融监管总局及网信办关于生成式AI在金融领域应用的相关合规政策与数据安全红线",
+    "测算中国金融大模型市场规模及未来3年增长率，分析主要驱动力（降本增效/业务创新）",
+    "分析行业竞争格局，对比'通用大模型厂商'（如百度/阿里）与'垂直金融科技厂商'（如度小满/恒生电子）的优劣势",
+    "评估金融大模型的商业化模式（API调用/私有化部署/MaaS）及客户付费意愿",
+    "研判行业发展瓶颈，包括算力成本、高质量金融语料稀缺性及模型幻觉问题"
+  ]
+
+  ### Example 2: Mature Industry Analysis
+  **Query**: Research target: Global Electric Vehicle Battery Industry, target type: industry
+
+  **Good Analysis Tasks**:
+  [
+    "Analyze the global market size of EV batteries and forecast demand based on EV penetration rates",
+    "Map the value chain: from raw material mining (Lithium/Cobalt) to cell manufacturing and pack assembly",
+    "Evaluate the competitive landscape and market share of top tier players (CATL, LG Energy, BYD, Panasonic)",
+    "Analyze technological trends: comparison between NCM (ternary) and LFP (lithium iron phosphate) chemistries and solid-state battery progress",
+    "Assess the impact of geopolitical policies (e.g., US IRA Act, EU Battery Regulation) on the global supply chain",
+    "Analyze the cost structure of battery production and the price trend of key raw materials over the last 3 years",
+    "Identify key barriers to entry: capital intensity, patent moats, and economies of scale"
+  ]
+
+  ## Input
+  **User Query**: {query}
+
+  **Existing Analysis Tasks** (avoid duplication):
+  {existing_tasks}
+
+  ## Output
+  Return a JSON array of task strings. Each task should describe a specific analysis objective.
+
+  ```json
+  [
+    "Analysis task 1: what to analyze + what insights to derive",
+    "Analysis task 2: ...",
+    ...
+  ]
+
+select_data: |
+  You are a financial-research analyst responsible for gathering the right datasets to support a specific report section.
+
+  Task:
+  - Review the overall research topic plus the outline and writing guidance for the section in scope.
+  - Select the most relevant datasets from the catalog so the author has credible evidence for every required argument.
+
+  Guidelines:
+  1. Understand the section objectives and proposed narrative before picking data.
+  2. Only choose datasets that clearly support the section; ignore unrelated material.
+  3. Return the results as JSON. Use the dataset names exactly as they appear in the catalog.
+
+  Required output format:
+  ```json
+  {{
+      "selected_data_list": ["Dataset 1", "Dataset 2", "Dataset 3"]
+  }}
+  ```
+
+  Dataset catalog:
+  {data_description}
+
+  Section outline and writing guidance:
+  {section_description}
+
+  Begin selecting datasets now. Respond strictly in JSON.
+
+select_analysis: |
+  You are a financial-research analyst filling in a report section. To stay accurate, you must choose which prior analytical memos to cite.
+
+  Task:
+  - Review the research topic plus the outline and writing guidance for the section.
+  - Select the analysis reports that best support this section's arguments.
+
+  Guidelines:
+  1. Understand the section intent and explore the provided outline to infer the evidence needed.
+  2. Read each analysis summary carefully and keep only those that offer useful insights.
+  3. Exclude irrelevant analyses even if they look interesting.
+  4. Return the selections as JSON, referencing each report by the exact name listed.
+
+  Required output format:
+  ```json
+  {{
+      "selected_analysis_list": ["Analysis 1", "Analysis 2", "Analysis 3"]
+  }}
+  ```
+
+  Analysis report list:
+  {analysis_description}
+
+  Section outline and writing guidance:
+  {section_description}
+
+  Begin selecting analyses now. Respond strictly in JSON.
+

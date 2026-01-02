@@ -9,7 +9,7 @@ section_writing: |
   1.  **Scope Control:** This is a middle chapter. **DO NOT** write broad introductions, executive summaries, or concluding remarks. Start directly with the section content.
   2.  **Strict Data Grounding:** All claims, insights, and arguments must be strictly derived from the data retrieved via APIs. **DO NOT** use external knowledge or hallucinate numbers.
   3.  **Chart Integration:** Embed charts strictly using `@import "filename"`. Filenames must exactly match the analysis output.
-  4.  **Citation:** Every data point must be cited using `[Source: Name]`.
+  4.  **Citation:** Every data point must be cited using `[Source: Name]`. Make sure the name should be the original source,  not the analysis report of the given data.
   5.  **Language:** Write solely in {target_language}.
   
   # Tool Capability
