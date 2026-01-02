@@ -694,7 +694,7 @@ class ReportGenerator(BaseAgent):
             max_iterations=max_iterations,
             target_language=self.target_language_name
         )
-        return [{"role": "user", "content": initial_prompt}]
+        return [{"role": "system", "content": initial_prompt}]
 
     async def generate_outline(
         self, 

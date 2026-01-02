@@ -44,6 +44,7 @@ class Report:
         if '__content__' in all_structure:
             del all_structure['__content__']
         if len(all_structure) > 1:
+            self.logger.error(f"all_structure: {all_structure}")
             raise ValueError("Report outline must contain exactly one top-level heading.")
         self.title = list(all_structure.keys())[0]
         self.report_structure = all_structure[self.title]
