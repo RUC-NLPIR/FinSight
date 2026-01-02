@@ -125,10 +125,7 @@ class AsyncLLM:
             
             except Exception as e:
                 last_exception = e
-                print(e)
-                print(messages)
-                print("*************")
-                print(len(str(messages)))
+                print("Error in AsyncLLM.generate: ", e)
                 
                 if "Error code: 400" in str(e):
                     print("Context length exceeded. Removing the first assistant message to shorten the prompt.")
