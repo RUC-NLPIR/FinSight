@@ -44,7 +44,7 @@ https://github.com/user-attachments/assets/41963369-3dd4-4dfd-ad95-ef95cd092ebb
     <img src="/assets/example6_industry.jpg" width="100%" alt="The Development of Financial AI Agents">
   </a>
 
-  <i>📄 Final Generated Report Example: The Development of Financial AI Agents</i>
+  <i>📄 Final Generated Report Example: The Development of Financial AI Agents (click pickture to read)</i>
 </div>
 
 
