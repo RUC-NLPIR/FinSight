@@ -364,19 +364,20 @@ class DataAnalyzer(BaseAgent):
                 return last_successful_code, os.path.basename(last_successful_chart_path)
             critic_response = await self.vlm.generate(
                 messages=[
-                    {"role": "user", "content": self.VLM_CRITIQUE_PROMPT.format(
-                        task=task,
-                        content=report_content,
-                        code_snippet=chart_code
-                    )},
-                    {"role": "user", "content": [
-                        {"type": "text", "text": f"Here is the chart generated in iteration {iteration + 1}."},
-                        {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{image_b64}"}}
-                    ]}
-                ],
+                    {
+                        "role": "user", 
+                        "content": [
+                            {"type": "text", "text": self.VLM_CRITIQUE_PROMPT.format(
+                                task=task,
+                                content=report_content,
+                            )},
+                            {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{image_b64}"}}
+                        ]
+                    }
+                ]
             )
             self.logger.info("Image critic succeeded")
-            if 'FINISH' in critic_response:
+            if 'finish' in critic_response.lower():
                 return last_successful_code, os.path.basename(last_successful_chart_path)
             
             conversation_history.append({"role": "assistant", "content": last_successful_code})
@@ -446,7 +447,7 @@ class DataAnalyzer(BaseAgent):
                 conversation_history.append({"role": "user", "content": feedback})
                 continue  # retry
             
-            return llm_response, chart_filepath
+            return action_content, chart_filepath
 
         # Bail out after three failed attempts
         return None, None
@@ -469,6 +470,10 @@ class DataAnalyzer(BaseAgent):
     ) -> dict:
         input_data['enable_chart'] = enable_chart
         self.enable_chart = enable_chart
+
+        if not resume:
+            self.current_phase = 'phase1'
+
         # Phase 1: conversational analysis (handled by BaseAgent)
         if self.current_phase == 'phase1':
             run_result = await super().async_run(
@@ -486,8 +491,7 @@ class DataAnalyzer(BaseAgent):
         try:
             final_result = run_result['final_result']
         except:
-            print(run_result)
-            assert False
+            self.logger.error(f"final_result: {final_result}")
         # Parse the generated analysis report
         if self.current_phase == 'phase2':
             report_title, report_content = self._parse_generated_report(final_result)

@@ -203,6 +203,7 @@ class BaseAgent:
         
         # Restore runtime state
         agent._resume_state = state
+        agent.current_checkpoint = state
         agent.current_task_data = state.get('current_task_data', {})
         
         # Ensure logger context is configured
