@@ -1,0 +1,49 @@
+target_name: "中国金融智能体发展研究"
+stock_code: ""
+target_type: 'financial_industry'  # financial_company, macro, industry, general
+output_dir: "./outputs/exp-v3"
+language: 'zh' # zh,en
+reference_doc_path: 'src/template/report_template_yulan.docx' # used for docx style
+outline_template_path: 'src/template/industry_outline_zh.md' # used for outline style
+
+custom_collect_tasks:
+  - "中国政府关于'人工智能+'、'金融五篇大文章'及数字金融相关的最新政策文件与指导意见"
+  - "中国金融行业IT投入规模、AI解决方案市场规模及未来5年增长预测数据"
+  - "主流大模型厂商（如百度、阿里、腾讯、科大讯飞、蚂蚁等）发布的金融行业大模型参数及评测报告"
+  - "金融机构（银行、证券、保险）近期关于'AI智能体'、'大模型'、'数字员工'的招投标公告与中标信息"
+  - "金融智能体在典型场景（智能投研、智能信贷、智能客服、代码助手）的实际落地案例与应用效果数据"
+  - "行业内主要智能体厂商的产品白皮书、技术架构图及解决方案介绍资料"
+  - "关于AI Agent安全合规、数据隐私保护、算法伦理（如防幻觉、防注入）的行业标准或监管法规"
+  - "Github及技术社区中关于金融MCP（Model Context Protocol）、AgentOps及多智能体协作框架的讨论热度与技术文档"
+
+custom_analysis_tasks:
+  - "梳理中国金融智能体的发展历程，界定从'传统AI'到'大模型'再到'智能体'的技术演进路径与特征差异"
+  - "分析宏观政策（如金监总局数据安全办法）对智能体在金融核心业务场景落地的推动与制约作用"
+  - "构建金融智能体厂商竞争格局图谱，对比云厂商、AI创企、金融科技子公司及ISV厂商的核心优劣势"
+  - "深入剖析金融机构（甲方）的真实需求差异，对比国有大行、股份制银行与中小金融机构的采纳策略与付费意愿"
+  - "评估智能体在关键金融场景（营销、风控、投研、运营）的应用效能（ROI），分析从POC到规模化落地的难点"
+  - "探讨金融智能体的商业模式演变，分析从'软件交付'向'RaaS（结果即服务）'转型的可行性与挑战"
+  - "分析当前技术瓶颈（如复杂逻辑推理能力、幻觉控制、数据治理）对金融业务容错率的影响"
+  - "研判行业未来趋势，预测'智能体金融网络平台'及'人机共生金融服务'的演进时间表与形态"
+
+use_collect_data_cache: True
+use_analysis_cache: True
+use_report_outline_cache: True
+use_full_report_cache: True
+use_post_process_cache: True
+
+# load in environment variables
+llm_config_list:
+  - model_name: "${DS_MODEL_NAME}"
+    api_key: "${DS_API_KEY}"
+    base_url: "${DS_BASE_URL}"
+    generation_params:
+      temperature: 0.7
+      max_tokens: 32768
+      top_p: 0.95
+  - model_name: "${EMBEDDING_MODEL_NAME}"
+    api_key: "${EMBEDDING_API_KEY}"
+    base_url: "${EMBEDDING_BASE_URL}"
+  - model_name: "${VLM_MODEL_NAME}"
+    api_key: "${VLM_API_KEY}"
+    base_url: "${VLM_BASE_URL}"
