@@ -14,7 +14,7 @@ from io import BytesIO
 import pdfplumber
 import chardet
 
-from crawl4ai import AsyncWebCrawler
+from crawl4ai import AsyncWebCrawler, BrowserConfig, CrawlerRunConfig, CacheMode
 from openai import OpenAI
 from bs4 import BeautifulSoup
 
@@ -84,17 +84,21 @@ class Click(Tool):
         Returns:
             List[ToolResult]: Collected page snippets.
         """
-        crawler = AsyncWebCrawler()
         if isinstance(urls, str):
             urls = [urls]
         try:
+            browser_conf = BrowserConfig(headless=True)  # or False to see the browser
+            run_conf = CrawlerRunConfig(
+                cache_mode=CacheMode.BYPASS
+            )
             result_list = []
             for url in urls:
                 if url.endswith(".pdf"):
                     content = await self.extract_pdf_text_async(url)
                 else:
-                    result = await crawler.arun(url=url)
-                    content = str(result.markdown)
+                    async with AsyncWebCrawler(config=browser_conf) as crawler:
+                        result = await crawler.arun(url=url, config=run_conf)
+                        content = str(result.markdown)
                     
                     # use naive requests with async to get the content
                     # content = await self.fetch_url(url)
@@ -104,7 +108,7 @@ class Click(Tool):
                     ClickResult(
                         name=content[:30],
                         description=f"Title: {url}",
-                        data=content[:10000],
+                        data=content[:6000],
                         link=url,
                         source=f"URL: {url}"
                     )
@@ -134,23 +138,6 @@ class Click(Tool):
             print(f"Error: {e}")
             return []
     
-    async def get_full_page(self, url: str) -> str:
-        """
-        Retrieve the complete content for a single URL.
-
-        Args:
-            url: Target URL.
-
-        Returns:
-            str: The extracted text/markdown content.
-        """
-        crawler = AsyncWebCrawler()
-        if url.endswith(".pdf"):
-            content = await self.extract_pdf_text_async(url)
-        else:
-            result = await crawler.arun(url=url)
-            content = str(result.markdown)
-        return content
 
     def extract_json_from_text(self, text: str) -> Dict:
         """
