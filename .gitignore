@@ -79,3 +79,4 @@ htmlcov/
 venv/
 .venv/
 ENV/
+evaluations/
