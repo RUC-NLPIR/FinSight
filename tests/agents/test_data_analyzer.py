@@ -33,7 +33,7 @@ if __name__ == "__main__":
         memory=memory
     )
     result = asyncio.run(agent.async_run(
-        input_data={'task': '商汤科技', 'analysis_task': '商汤科技的主要营收来源'}, echo=True, max_iterations=10, enable_chart=False)
+        input_data={'task': '商汤科技', 'analysis_task': '商汤科技的主要营收来源'}, echo=True, max_iterations=10, enable_chart=True)
     )
     print(result)
     print(result['final_result'][:100000])

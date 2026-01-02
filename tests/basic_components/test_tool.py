@@ -22,8 +22,8 @@ if __name__ == "__main__":
     all_tools = list_tools() # 获取所有工具名列表
     # print(all_tools)
 
-    tool = get_tool_by_name('Bocha web search')()
-    # tool = get_tool_by_name('Web page content fetcher')()
-    # result = asyncio.run(tool.api_function(['https://www.sciencedirect.com/science/article/pii/S2666389924001235'], '苹果公司'))
-    result = asyncio.run(tool.api_function('The Next Generation of AI Reasoning'))
+    # tool = get_tool_by_name('Bocha web search')()
+    tool = get_tool_by_name('Web page content fetcher')()
+    result = asyncio.run(tool.api_function(['https://help.apiyi.com/multimodal-api-image-token-calculation-guide.html'], '苹果公司'))
+    # result = asyncio.run(tool.api_function('The Next Generation of AI Reasoning'))
     print(result)
