@@ -56,16 +56,16 @@ class AsyncCodeExecutor:
             import matplotlib.pyplot as plt
             import matplotlib
             import matplotlib.font_manager as fm
-            font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'kt_font.ttf')
+            # font_path = os.path.join(os.path.dirname(__file__), 'fonts', 'kt_font.ttf')
             
-            if os.path.exists(font_path):
-                fm.fontManager.addfont(font_path)
-                font_prop = fm.FontProperties(fname=font_path)
-                custom_font_name = font_prop.get_name()
-                matplotlib.rcParams['font.family'] = custom_font_name
-                matplotlib.rcParams['font.sans-serif'] = [custom_font_name, 'SimHei', 'Arial Unicode MS']
-            else:
-                matplotlib.rcParams['font.sans-serif'] = ['SimHei', 'KaiTi', 'sans-serif']
+            # if os.path.exists(font_path):
+            #     fm.fontManager.addfont(font_path)
+            #     font_prop = fm.FontProperties(fname=font_path)
+            #     custom_font_name = font_prop.get_name()
+            #     matplotlib.rcParams['font.family'] = custom_font_name
+            #     matplotlib.rcParams['font.sans-serif'] = [custom_font_name, 'SimHei', 'Arial Unicode MS']
+            # else:
+            matplotlib.rcParams['font.sans-serif'] = ['SimHei', 'sans-serif']
             matplotlib.rcParams['axes.unicode_minus'] = False
             context.update({
                 'pd': pd,
