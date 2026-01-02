@@ -171,6 +171,19 @@ Open http://localhost:3000
 
 ## 🎨 Result Examples
 
+Below is a **fully automated** research report on **The Development of Financial AI Agents**, generated entirely by this project.
+
+
+<div align="center">
+  <a href="/assets/example_reports/Financial_Agent_Industry.pdf">
+    <img src="/assets/example6_industry.jpg" width="100%" alt="The Development of Financial AI Agents">
+  </a>
+</div>
+
+<br>
+
+**Breakdown of the specific capabilities used to generate such reports:**
+
 <div align="center">
 
 | | |
@@ -184,7 +197,7 @@ Open http://localhost:3000
 
 Full sample reports live in `assets/example_reports`.
 
-![Full report preview](/assets/example5.png)
+![Full report preview](/assets/example6_industry.jpg)
 
 ---
 
@@ -252,7 +265,7 @@ FinSight is a multi-stage, memory-centric pipeline: Data Collection → Analysis
 
 ## 📖 Advanced Usage
 
-> **📚 Full Documentation**: See **[docs/ADVANCED_USAGE.md](docs/ADVANCED_USAGE.md)** for comprehensive technical documentation with code examples.
+> **📚 Full Documentation**: See **[docs/advanced_usage.md](docs/advanced_usage.md)** for comprehensive technical documentation with code examples.
 
 <details>
 <summary><b>🔑 API Keys & Model Configuration</b></summary>
