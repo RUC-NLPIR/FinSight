@@ -8,7 +8,7 @@ matplotlib.use('Agg')
 import os
 
 def draw_kline_chart(kline_data: pd.DataFrame, working_dir: str):
-    font_path = "./font/kt_font.ttf"
+    font_path = "./fonts/kt_font.ttf"
     font = font_manager.FontProperties(fname=font_path, size=16)
     plt.rcParams['axes.unicode_minus'] = False
 
