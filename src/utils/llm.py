@@ -128,6 +128,9 @@ class AsyncLLM:
                 print("Error in AsyncLLM.generate: ", e)
                 
                 if "Error code: 400" in str(e):
+                    if 'Invalid max_tokens value' in str(e):
+                        self.generation_params['max_tokens'] = 8192
+                        break
                     print("Context length exceeded. Removing the first assistant message to shorten the prompt.")
                     
                     first_assistant_message_idx = -1
