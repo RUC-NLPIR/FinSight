@@ -191,7 +191,11 @@ class SerperSearch(Tool):
             })
             
             response = await client.post(url, headers=self.headers, data=payload)
-            result = response.json()['organic']
+            response_data = response.json()
+            result = response_data.get('organic', [])
+            if not result and 'error' in response_data:
+                print(f"Error from search API: {response_data['error']}")
+                return []
             result_list = []
             if len(result) > 0:
                 for item in result:
