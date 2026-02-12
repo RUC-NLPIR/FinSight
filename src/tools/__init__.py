@@ -25,6 +25,7 @@ _TOOL_MODULES = [
     ".financial.market",
     ".financial.us_market",
     ".industry.industry",
+    ".macro.us_macro",
 ]
 
 for _mod in _TOOL_MODULES:
