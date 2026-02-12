@@ -392,7 +392,19 @@ class BaseAgent:
     
 
     def _agent_tool_function(self, tool_name: str = None, **kwargs):
-        """Execute a tool by name."""
+        """Execute a tool by name.
+
+        This function is injected into the code-executor's global namespace so
+        that LLM-generated code can call tools synchronously via
+        ``call_tool(tool_name='...', **kwargs)``.
+
+        Because it runs inside ``exec()`` which is already nested in a running
+        asyncio event loop, we must **not** call ``asyncio.run()`` (that would
+        deadlock or raise ``RuntimeError``).  Instead we delegate to an
+        ``AsyncBridge`` that owns a separate background event loop.
+        """
+        from src.utils.async_bridge import get_async_bridge
+
         if tool_name is None:
             raise ValueError("tool_name is required")
         target_tool = None
@@ -410,16 +422,18 @@ class BaseAgent:
             self.memory.add_log(self.id, None, kwargs, [], error=True, note=f"No available tools for tool_name: {tool_name}")
             return []
 
+        bridge = get_async_bridge()
+
         try:
             if issubclass(type(target_tool), BaseAgent):
                 if 'task' not in kwargs:
                     kwargs['task'] = self.current_task_data['task']
-                response = asyncio.run(target_tool.async_run(input_data=kwargs))
+                response = bridge.run_async(target_tool.async_run(input_data=kwargs))
                 response = response['final_result']
                 self.memory.add_log(target_tool.id, target_tool.type, kwargs, response, error=False, note=f"Tool {target_tool.name} executed successfully")
                 return response
             elif issubclass(type(target_tool), Tool):
-                response = asyncio.run(target_tool.api_function(**kwargs))
+                response = bridge.run_async(target_tool.api_function(**kwargs))
                 sources = [item.source for item in response]
                 data_list = [item.data for item in response]
                 sources = "\n".join(sources)

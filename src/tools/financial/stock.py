@@ -1,8 +1,10 @@
-import requests
+import datetime
 import json
+import requests
+
 import akshare as ak
-import pandas as pd
 import efinance as ef
+import pandas as pd
 from bs4 import BeautifulSoup
 
 from ..base import Tool, ToolResult
@@ -82,12 +84,29 @@ class ShareHoldingStructure(Tool):
             if market == "A":
                 data = ak.stock_main_stock_holder(stock=stock_code)
             elif market == "HK":
-                # Scrape data from Eastmoney
+                # Scrape data from Eastmoney — use the latest quarter-end date
+                # instead of a hardcoded one so the data stays fresh.
+                today = datetime.date.today()
+                quarter_ends = [
+                    datetime.date(today.year, 3, 31),
+                    datetime.date(today.year, 6, 30),
+                    datetime.date(today.year, 9, 30),
+                    datetime.date(today.year, 12, 31),
+                ]
+                # Pick the most recent quarter-end that has already passed.
+                past_ends = [d for d in quarter_ends if d <= today]
+                if not past_ends:
+                    # Before March 31 of the current year — use last year's Q4.
+                    report_date = datetime.date(today.year - 1, 12, 31)
+                else:
+                    report_date = past_ends[-1]
+                report_date_str = report_date.strftime("%Y-%m-%d")
+
                 headers = {
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
                 }
                 output = requests.get(
-                    f"https://datacenter.eastmoney.com/securities/api/data/v1/get?reportName=RPT_HKF10_EQUITYCHG_HOLDER&columns=SECURITY_CODE%2CSECUCODE%2CORG_CODE%2CNOTICE_DATE%2CREPORT_DATE%2CHOLDER_NAME%2CTOTAL_SHARES%2CTOTAL_SHARES_RATIO%2CDIRECT_SHARES%2CSHARES_CHG_RATIO%2CSHARES_TYPE%2CEQUITY_TYPE%2CHOLD_IDENTITY%2CIS_ZJ&quoteColumns=&filter=(SECUCODE%3D%22{stock_code}.HK%22)(REPORT_DATE%3D%272024-12-31%27)&pageNumber=1&pageSize=&sortTypes=-1%2C-1&sortColumns=EQUITY_TYPE%2CTOTAL_SHARES&source=F10&client=PC&v=032666133943694553",
+                    f"https://datacenter.eastmoney.com/securities/api/data/v1/get?reportName=RPT_HKF10_EQUITYCHG_HOLDER&columns=SECURITY_CODE%2CSECUCODE%2CORG_CODE%2CNOTICE_DATE%2CREPORT_DATE%2CHOLDER_NAME%2CTOTAL_SHARES%2CTOTAL_SHARES_RATIO%2CDIRECT_SHARES%2CSHARES_CHG_RATIO%2CSHARES_TYPE%2CEQUITY_TYPE%2CHOLD_IDENTITY%2CIS_ZJ&quoteColumns=&filter=(SECUCODE%3D%22{stock_code}.HK%22)(REPORT_DATE%3D%27{report_date_str}%27)&pageNumber=1&pageSize=&sortTypes=-1%2C-1&sortColumns=EQUITY_TYPE%2CTOTAL_SHARES&source=F10&client=PC&v=032666133943694553",
                     headers = headers,
                 )
                 try:
