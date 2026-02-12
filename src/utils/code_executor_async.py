@@ -1,5 +1,6 @@
 import asyncio
 import io
+import logging
 import sys
 import os
 import dill  # Use dill instead of pickle for more robust serialization
@@ -11,6 +12,8 @@ import types
 from contextlib import redirect_stdout, redirect_stderr
 from typing import Dict, Any, List, Tuple
 import pandas as pd
+
+_sandbox_logger = logging.getLogger(__name__ + ".sandbox")
 
 # Modules that LLM-generated code is NOT allowed to import.
 RESTRICTED_MODULES = frozenset({
@@ -52,6 +55,9 @@ class AsyncCodeExecutor:
         def _restricted_import(name, *args, **kwargs):
             top_level = name.split(".")[0]
             if top_level in RESTRICTED_MODULES:
+                _sandbox_logger.warning(
+                    "Blocked import of restricted module '%s' in code sandbox", name,
+                )
                 raise ImportError(
                     f"Importing '{name}' is not allowed in the code sandbox."
                 )
@@ -68,6 +74,10 @@ class AsyncCodeExecutor:
             if any(m in mode for m in ("w", "a", "x", "+")):
                 abs_path = _os_mod.path.abspath(str(file))
                 if not abs_path.startswith(_allowed_dir):
+                    _sandbox_logger.warning(
+                        "Blocked file write to '%s' (outside sandbox dir '%s')",
+                        file, _allowed_dir,
+                    )
                     raise PermissionError(
                         f"Writing to '{file}' is not allowed. "
                         f"Sandbox writes are restricted to {_allowed_dir}"

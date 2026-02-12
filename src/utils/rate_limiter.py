@@ -7,8 +7,11 @@ Usage::
 """
 
 import asyncio
+import logging
 import time
 from typing import Dict
+
+logger = logging.getLogger(__name__)
 
 
 class RateLimiter:
@@ -46,6 +49,10 @@ class RateLimiter:
             last = self._last_call.get(service, 0.0)
             wait = interval - (now - last)
             if wait > 0:
+                logger.debug(
+                    "Rate limiter: delaying %s call by %.2fs (interval=%.2fs)",
+                    service, wait, interval,
+                )
                 await asyncio.sleep(wait)
             self._last_call[service] = time.monotonic()
 

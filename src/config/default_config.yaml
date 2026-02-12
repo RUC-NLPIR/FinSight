@@ -1,8 +1,19 @@
 target_name: "商汤科技"
 stock_code: "00020"
 target_type: 'company'  # company, macro, industry
+market: 'A'  # A (Chinese A-share), HK (Hong Kong), US (United States)
 output_dir: "./outputs/exp-v1"
 language: 'zh' # zh,en
+
+# Plugin directories for external Tool/Agent classes (scanned on init)
+plugin_dirs: []
+
+# Per-service rate limits (seconds between consecutive calls)
+rate_limits:
+  search_engines: 1.0
+  financial_apis: 0.5
+  fred_api: 0.5
+  yfinance: 0.2
 
 use_collect_data_cache: True
 use_analysis_cache: True

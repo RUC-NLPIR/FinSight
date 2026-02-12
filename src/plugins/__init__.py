@@ -79,7 +79,17 @@ def load_plugins(plugin_dirs: List[str] | None = None) -> Tuple[int, int]:
                         continue
 
                     if issubclass(obj, Tool) and obj is not Tool:
+                        # Guard: do not override core tools with plugins
                         try:
+                            instance = obj()
+                            from src.tools import get_tool_by_name
+                            existing = get_tool_by_name(instance.name)
+                            if existing is not None:
+                                warnings.warn(
+                                    f"Plugin tool '{instance.name}' from {fpath} "
+                                    f"conflicts with existing core tool — skipping"
+                                )
+                                continue
                             register_tool(obj, category="plugin")
                             tools_loaded += 1
                         except Exception as exc:

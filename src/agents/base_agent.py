@@ -424,6 +424,24 @@ class BaseAgent:
 
         bridge = get_async_bridge()
 
+        # Apply rate limiting if the config provides a limiter
+        rate_limiter = getattr(self.config, 'rate_limiter', None)
+        if rate_limiter is not None:
+            # Determine service category for rate limiting
+            service = "financial_apis"  # default
+            tool_type = getattr(target_tool, 'type', '')
+            tool_name_lower = (tool_name or '').lower()
+            if 'search' in tool_name_lower or 'web' in tool_name_lower:
+                service = "search_engines"
+            elif 'fred' in tool_name_lower:
+                service = "fred_api"
+            elif 'us' in tool_name_lower and 'fred' not in tool_name_lower:
+                service = "yfinance"
+            try:
+                bridge.run_async(rate_limiter.acquire(service))
+            except Exception as rl_err:
+                self.logger.debug(f"Rate limiter acquire for {service}: {rl_err}")
+
         try:
             if issubclass(type(target_tool), BaseAgent):
                 if 'task' not in kwargs:

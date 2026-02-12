@@ -1,0 +1,96 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "finsight"
+version = "0.2.0"
+description = "FinSight: Multi-agent financial deep research system for publication-ready reports"
+readme = "README.md"
+license = {text = "GPL-3.0"}
+requires-python = ">=3.10"
+authors = [
+    {name = "RUC-NLPIR"},
+]
+keywords = ["finance", "research", "multi-agent", "llm", "report-generation"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Office/Business :: Financial",
+]
+
+dependencies = [
+    "openai>=1.0",
+    "aiohttp>=3.9",
+    "python-dotenv>=1.0",
+    "dill>=0.3",
+    "json-repair>=0.20",
+    "pandas>=2.0",
+    "numpy>=1.24",
+    "matplotlib>=3.7",
+    "seaborn>=0.12",
+    "pdfplumber>=0.10",
+    "python-docx>=1.0",
+    "chardet>=5.0",
+    "PyYAML>=6.0",
+    "yfinance>=0.2",
+    "fredapi>=0.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "pytest-cov>=5.0",
+    "hypothesis>=6.100",
+    "ruff>=0.4",
+]
+chinese = [
+    "akshare>=1.12",
+    "jieba>=0.42",
+]
+web = [
+    "crawl4ai>=0.3",
+    "playwright>=1.40",
+    "fake-useragent>=1.4",
+]
+
+[project.urls]
+Homepage = "https://github.com/RUC-NLPIR/FinSight"
+Repository = "https://github.com/RUC-NLPIR/FinSight"
+Documentation = "https://deepwiki.com/RUC-NLPIR/FinSight"
+"Bug Tracker" = "https://github.com/RUC-NLPIR/FinSight/issues"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-v --tb=short"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: integration tests requiring network access",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+[tool.ruff.isort]
+known-first-party = ["src"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
