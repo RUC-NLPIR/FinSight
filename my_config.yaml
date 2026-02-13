@@ -1,7 +1,7 @@
-target_name: "浪潮信息"
-stock_code: "000977"
+target_name: "商汤科技"
+stock_code: "00020.hk"
 target_type: 'financial_company'  # financial_company, macro, industry, general
-output_dir: "./outputs/exp-v1"
+output_dir: "./outputs/exp-v3"
 language: 'zh' # zh,en
 reference_doc_path: 'src/template/report_template.docx' # used for docx style
 outline_template_path: 'src/template/company_outline_zh.md' # used for outline style
