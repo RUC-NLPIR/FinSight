@@ -11,7 +11,7 @@ FinSight: Towards Real-World Financial Deep Research
 <p>
 
 [![arXiv](https://img.shields.io/badge/arXiv-2510.16844-b31b1b.svg?style=flat)](https://arxiv.org/abs/2510.16844)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 <a href="https://deepwiki.com/RUC-NLPIR/FinSight"><img src="https://devin.ai/assets/deepwiki-badge.png" alt="DeepWiki Document" height="20"/></a>
@@ -78,7 +78,10 @@ https://github.com/user-attachments/assets/41963369-3dd4-4dfd-ad95-ef95cd092ebb
     No more black-box summaries. Every conclusion is derived from a transparent *Chain-of-Analysis*, with strict citations linking back to original data sources, ensuring high textual faithfulness and verifiable insights.
 
 * **⚡ Comprehensive Market Intelligence**
-    A unified interface for multi-source financial data. access real-time stock quotes, financial statements, and macro indicators across A-share and HK markets, powered by a robust Python-based tool ecosystem.
+    A unified interface for multi-source financial data. Access real-time stock quotes, financial statements, and macro indicators across A-share, HK, and **US markets**, powered by a robust Python-based tool ecosystem.
+
+* **🇺🇸 US Market Support** *(New)*
+    Full US equity coverage via yfinance: company profiles, OHLCV price data, income statements, balance sheets, cash-flow statements, and institutional holder data. US macro indicators via FRED: CPI, GDP, unemployment, interest rates. Market indices: S&P 500, DJIA, NASDAQ.
 
 ---
 
@@ -91,8 +94,11 @@ FinSight is still under development and there are many issues and room for impro
 - [x] Checkpoint/resume for long-running tasks
 - [x] Interactive web demo (frontend + backend)
 - [ ] General-purpose research adaptation beyond finance
-- [ ] Multi-market support (US, global)
+- [x] Multi-market support (US equity + macro via yfinance/FRED)
 - [ ] Plugin system for custom tools and agents
+- [x] Code execution sandbox hardening (timeouts, restricted imports)
+- [x] Rate limiter for API calls
+- [x] CI/CD pipeline (GitHub Actions)
 
 ---
 

@@ -9,15 +9,29 @@ import inspect
 from typing import Dict, List, Type, Any, Optional
 from .base import Tool, ToolResult
 
-from .web.web_crawler import *
-from .web.search_engine_requests import *
-from .web.search_engine_playwright import *
-from .web.base_search import *
-from .macro.macro import *
-from .financial.company_statements import *
-from .financial.stock import *
-from .financial.market import *
-from .industry.industry import *
+# Gracefully import tool modules — some have heavy optional dependencies
+# (crawl4ai, playwright, etc.) that may not be installed in all environments.
+import importlib as _il
+import warnings as _w
+
+_TOOL_MODULES = [
+    ".web.web_crawler",
+    ".web.search_engine_requests",
+    ".web.search_engine_playwright",
+    ".web.base_search",
+    ".macro.macro",
+    ".financial.company_statements",
+    ".financial.stock",
+    ".financial.market",
+    ".industry.industry",
+    ".macro.us_macro",
+]
+
+for _mod in _TOOL_MODULES:
+    try:
+        _il.import_module(_mod, package=__name__)
+    except ImportError as _e:
+        _w.warn(f"Skipping {_mod}: {_e}", stacklevel=2)
 
 # Global registry for all tools
 _REGISTERED_TOOLS: Dict[str, Type[Tool]] = {}

@@ -116,9 +116,15 @@ class ReportGenerator(BaseAgent):
                 raise ValueError(f"Invalid data_id: {data_id}. Available range: 0-{len(analysis_result_list)-1}")
         
         def _get_deepsearch_result(query: str):
-            """Call deep search agent"""
+            """Call deep search agent.
+
+            Uses the async bridge to avoid the asyncio.run() deadlock when
+            called from inside exec()'d code within a running event loop.
+            """
+            from src.utils.async_bridge import get_async_bridge
+            bridge = get_async_bridge()
             ds_agent = tool_list[0]
-            output = asyncio.run(ds_agent.async_run(input_data={
+            output = bridge.run_async(ds_agent.async_run(input_data={
                 'task': current_task_data.get('task', ''),
                 'query': query
             }))
@@ -270,7 +276,18 @@ class ReportGenerator(BaseAgent):
             img_captions.extend(list(img_dicts.keys()))
             img_paths.extend(list(img_dicts.values()))
         if len(img_captions) == 0:
-            self.logger.warning("No image captions found, skip image path replacement")
+            self.logger.warning("No image captions found, replacing @import placeholders with fallback text")
+            for section in report.sections:
+                section_new_content = []
+                for p_paragraph in section._content:
+                    p_paragraph = re.sub(
+                        r'@import.*',
+                        '*[Chart not available — no chart images were generated during analysis]*',
+                        p_paragraph,
+                        flags=re.DOTALL,
+                    )
+                    section_new_content.append(p_paragraph)
+                section._content = section_new_content
             return report
         self.logger.info(f"Building index for {len(img_captions)} images")
         index = IndexBuilder(config=self.config, embedding_model=self.use_embedding_name, working_dir=self.working_dir)
@@ -611,6 +628,14 @@ class ReportGenerator(BaseAgent):
             env['PYTHONIOENCODING'] = 'utf-8'
             subprocess.run(pandoc_cmd, check=True, capture_output=True, text=True, encoding='utf-8', env=env)
             
+            # Validate output is non-empty
+            if not os.path.exists(md_path) or os.path.getsize(md_path) == 0:
+                self.logger.error(
+                    f"Report output is empty: {md_path}. "
+                    "This usually means sections produced no content. "
+                    "Check section generation logs for errors."
+                )
+
             pdf_path = docx_path.replace(".docx", ".pdf")
             try:
                 docx2pdf.convert(docx_path, pdf_path)

@@ -22,6 +22,7 @@ class Config:
         
         self._set_dirs()
         self._set_llms()
+        self._set_rate_limiter()
 
     
     def _load_config(self, config_file_path):
@@ -115,5 +116,11 @@ class Config:
             llm_dict[model_name] = llm
         self.llm_dict = llm_dict
             
+    def _set_rate_limiter(self):
+        """Initialize the global rate limiter from config."""
+        from src.utils.rate_limiter import RateLimiter
+        rate_limits = self.config.get('rate_limits', {})
+        self.rate_limiter = RateLimiter(rate_limits)
+
     def __str__(self):
         return str(self.config)
