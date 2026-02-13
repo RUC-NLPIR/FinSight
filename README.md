@@ -95,7 +95,7 @@ FinSight is still under development and there are many issues and room for impro
 - [x] Interactive web demo (frontend + backend)
 - [ ] General-purpose research adaptation beyond finance
 - [x] Multi-market support (US equity + macro via yfinance/FRED)
-- [x] Plugin system for custom tools and agents
+- [ ] Plugin system for custom tools and agents
 - [x] Code execution sandbox hardening (timeouts, restricted imports)
 - [x] Rate limiter for API calls
 - [x] CI/CD pipeline (GitHub Actions)

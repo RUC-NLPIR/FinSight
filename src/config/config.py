@@ -23,7 +23,6 @@ class Config:
         self._set_dirs()
         self._set_llms()
         self._set_rate_limiter()
-        self._load_plugins()
 
     
     def _load_config(self, config_file_path):
@@ -122,18 +121,6 @@ class Config:
         from src.utils.rate_limiter import RateLimiter
         rate_limits = self.config.get('rate_limits', {})
         self.rate_limiter = RateLimiter(rate_limits)
-
-    def _load_plugins(self):
-        """Load plugins from configured directories."""
-        plugin_dirs = self.config.get('plugin_dirs', [])
-        if plugin_dirs:
-            try:
-                from src.plugins import load_plugins
-                n_tools, n_agents = load_plugins(plugin_dirs)
-                if n_tools or n_agents:
-                    print(f"Loaded {n_tools} plugin tool(s) and {n_agents} plugin agent(s)")
-            except Exception as e:
-                print(f"Warning: Plugin loading failed: {e}")
 
     def __str__(self):
         return str(self.config)

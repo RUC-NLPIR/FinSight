@@ -23,7 +23,6 @@ _TOOL_MODULES = [
     ".financial.company_statements",
     ".financial.stock",
     ".financial.market",
-    ".financial.us_market",
     ".industry.industry",
     ".macro.us_macro",
 ]
