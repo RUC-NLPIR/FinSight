@@ -49,14 +49,6 @@ python -m pytest tests/ --cov=src --cov-report=term-missing
 4. The tool will be auto-discovered and registered by `_auto_register_tools()`.
 5. Write tests in `tests/` — include both metadata and integration tests.
 
-## Adding a Plugin
-
-Plugins are Python files placed in configured plugin directories:
-
-1. Create a `.py` file with a `Tool` subclass.
-2. Configure `plugin_dirs` in your YAML config.
-3. The plugin loader will auto-discover and register your tools.
-
 ## Pull Request Guidelines
 
 - One logical change per PR.
