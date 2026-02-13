@@ -17,6 +17,8 @@ akshare
 efinance
 matplotlib
 seaborn
+yfinance>=0.2.0
+fredapi>=0.5.0
 
 # Document Processing
 pdfplumber

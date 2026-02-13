@@ -1,5 +1,12 @@
-import akshare as ak
+try:
+    import akshare as ak
+except ImportError:  # pragma: no cover - optional dependency
+    ak = None
 import pandas as pd
+try:
+    import yfinance as yf
+except ImportError:  # pragma: no cover - optional dependency
+    yf = None
 from ..base import Tool, ToolResult
 
 def preprocess_balance_data(data: pd.DataFrame) -> pd.DataFrame:
@@ -76,6 +83,19 @@ def preprocess_income_data(data: pd.DataFrame) -> pd.DataFrame:
     filtered_df['类目'] = filtered_df['类目'].apply(lambda x: f"**{x}**" if x.startswith('总') else x)
     return filtered_df
 
+
+def _prepare_us_statement_df(statement: pd.DataFrame, index_name: str = "Item (USD millions)") -> pd.DataFrame | None:
+    """Normalize yfinance statement format to the same table-like output pattern."""
+    if statement is None or statement.empty:
+        return None
+    data = statement.T.sort_index()
+    data = (data / 1_000_000).round(2)
+    if hasattr(data.index, "strftime"):
+        data.index = data.index.strftime("%Y")
+    data = data.T
+    data.index.name = index_name
+    return data.reset_index()
+
 class BalanceSheet(Tool):
     def __init__(self):
         super().__init__(
@@ -83,7 +103,7 @@ class BalanceSheet(Tool):
             description = "Returns the balance sheet covering assets, liabilities, and shareholders' equity for a given ticker.",
             parameters = [
                 {"name": "stock_code", "type": "str", "description": "Ticker, e.g., 000001", "required": True},
-                {"name": "market", "type": "str", "description": "Market flag: HK or A", "required": True},
+                {"name": "market", "type": "str", "description": "Market flag: HK, A, or US", "required": True},
                 {"name": "period", "type": "str", "description": "Reporting period (defaults to annual)", "required": False},
             ],
         )
@@ -144,7 +164,10 @@ class BalanceSheet(Tool):
         """
         period = "年度"
         try:
+            market = (market or "HK").upper()
             if market == "HK":
+                if ak is None:
+                    raise ImportError("akshare is required for HK balance sheet data")
                 data = ak.stock_financial_hk_report_em(
                     stock = stock_code,
                     symbol = "资产负债表",
@@ -155,11 +178,17 @@ class BalanceSheet(Tool):
                 except Exception as e:
                     print("Failed to preprocess balance-sheet data", e)
             elif market == "A":
+                if ak is None:
+                    raise ImportError("akshare is required for A-share balance sheet data")
                 data = ak.stock_balance_sheet_by_yearly_em(
                     symbol = stock_code,
                 )
+            elif market == "US":
+                if yf is None:
+                    raise ImportError("yfinance is required for US balance sheet data")
+                data = _prepare_us_statement_df(yf.Ticker(stock_code).balance_sheet)
             else:
-                raise ValueError(f"Unsupported market flag: {market}. Use 'HK' or 'A'.")
+                raise ValueError(f"Unsupported market flag: {market}. Use 'HK', 'A', or 'US'.")
         except Exception as e:
             print("Failed to fetch balance sheet", e)
             data = None
@@ -179,7 +208,7 @@ class IncomeStatement(Tool):
             description = "Returns the income statement detailing revenue, costs, expenses, and earnings for a given ticker.",
             parameters = [
                 {"name": "stock_code", "type": "str", "description": "Ticker, e.g., 000001", "required": True},
-                {"name": "market", "type": "str", "description": "Market flag: HK or A", "required": True},
+                {"name": "market", "type": "str", "description": "Market flag: HK, A, or US", "required": True},
             ],
         )
 
@@ -238,16 +267,25 @@ class IncomeStatement(Tool):
         """
         period = "年度"
         try:
+            market = (market or "HK").upper()
             if market == "HK":
+                if ak is None:
+                    raise ImportError("akshare is required for HK income statement data")
                 data = ak.stock_financial_hk_report_em(stock=stock_code, symbol="利润表", indicator=period)
                 try:
                     data = self._preprocess_data(data)
                 except Exception as e:
                     print("Failed to preprocess income-statement data", e)
             elif market == "A":
+                if ak is None:
+                    raise ImportError("akshare is required for A-share income statement data")
                 data = ak.stock_financial_benefit_ths(symbol=stock_code, indicator='按年度')
+            elif market == "US":
+                if yf is None:
+                    raise ImportError("yfinance is required for US income statement data")
+                data = _prepare_us_statement_df(yf.Ticker(stock_code).income_stmt)
             else:
-                raise ValueError(f"Unsupported market flag: {market}. Use 'HK' or 'A'.")
+                raise ValueError(f"Unsupported market flag: {market}. Use 'HK', 'A', or 'US'.")
         except Exception as e:
             print("Failed to fetch income statement", e)
             print("Parameters", stock_code, market, period)
@@ -270,7 +308,7 @@ class CashFlowStatement(Tool):
             description="Returns cash-flow statements showing operating, investing, and financing cash movements for a given ticker.",
             parameters=[
                 {"name": "stock_code", "type": "str", "description": "Ticker, e.g., 000001", "required": True},
-                {"name": "market", "type": "str", "description": "Market flag: HK or A", "required": True},
+                {"name": "market", "type": "str", "description": "Market flag: HK, A, or US", "required": True},
             ],
         )
 
@@ -328,17 +366,26 @@ class CashFlowStatement(Tool):
         """
         period = "年度"
         try:
+            market = (market or "HK").upper()
             if market == "HK":
+                if ak is None:
+                    raise ImportError("akshare is required for HK cash-flow data")
                 data = ak.stock_financial_hk_report_em(stock=stock_code, symbol="现金流量表", indicator=period)
                 try:
                     data = self._preprocess_data(data)
                 except Exception as e:
                     print("Failed to preprocess cash-flow data", e)
             elif market == "A":
+                if ak is None:
+                    raise ImportError("akshare is required for A-share cash-flow data")
                 #data = ak.stock_cash_flow_sheet_by_yearly_em(symbol=stock_code)
                 data = ak.stock_financial_cash_ths(symbol=stock_code, indicator='按年度')
+            elif market == "US":
+                if yf is None:
+                    raise ImportError("yfinance is required for US cash-flow data")
+                data = _prepare_us_statement_df(yf.Ticker(stock_code).cashflow)
             else:
-                raise ValueError(f"Unsupported market flag: {market}. Use 'HK' or 'A'.")
+                raise ValueError(f"Unsupported market flag: {market}. Use 'HK', 'A', or 'US'.")
         except Exception as e:
             print("Failed to fetch cash-flow statement", e)
             data = None

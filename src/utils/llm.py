@@ -1,4 +1,5 @@
 import asyncio
+import random
 from openai import OpenAI, AsyncOpenAI
 from typing import List, Dict, Optional, Union, Any
 
@@ -125,10 +126,11 @@ class AsyncLLM:
             
             except Exception as e:
                 last_exception = e
+                error_str = str(e)
                 print("Error in AsyncLLM.generate: ", e)
                 
-                if "Error code: 400" in str(e):
-                    if 'Invalid max_tokens value' in str(e):
+                if "Error code: 400" in error_str:
+                    if 'Invalid max_tokens value' in error_str:
                         self.generation_params['max_tokens'] = 8192
                         break
                     print("Context length exceeded. Removing the first assistant message to shorten the prompt.")
@@ -149,7 +151,13 @@ class AsyncLLM:
                         print("No assistant message available to remove; skipping further retries for this model.")
                         break 
                 
-                await asyncio.sleep(2) 
+                # Exponential backoff with jitter for rate-limit (429)
+                # and transient server errors (500, 502, 503, 529).
+                base_delay = min(2 ** attempt, 32)  # 1, 2, 4, 8, 16, 32
+                jitter = random.uniform(0, base_delay * 0.5)
+                delay = base_delay + jitter
+                print(f"Retrying in {delay:.1f}s (attempt {attempt + 1}/{max_retries_per_model})")
+                await asyncio.sleep(delay)
 
         
         raise Exception(f"All model attempts failed after retries. Last error: {last_exception}")
