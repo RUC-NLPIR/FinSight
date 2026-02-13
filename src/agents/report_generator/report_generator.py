@@ -628,7 +628,7 @@ class ReportGenerator(BaseAgent):
             env['PYTHONIOENCODING'] = 'utf-8'
             subprocess.run(pandoc_cmd, check=True, capture_output=True, text=True, encoding='utf-8', env=env)
             
-            # Validate output is non-empty (addresses Issue #6)
+            # Validate output is non-empty
             if not os.path.exists(md_path) or os.path.getsize(md_path) == 0:
                 self.logger.error(
                     f"Report output is empty: {md_path}. "
